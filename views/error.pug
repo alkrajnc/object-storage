@@ -1,5 +1,7 @@
 extends layout
 
 block content
-    h1= title
-    p= message
+    .error
+        block messege
+        h1(class="title")= title
+        p(class="description")= message
