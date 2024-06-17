@@ -7,6 +7,7 @@ import { errorHandler, errorNotFoundHandler } from "./middlewares/errorHandler";
 // Routes
 import { index } from "./routes/index";
 import { authenticator } from "./middlewares/auth";
+import { objectRouter } from "./routes/object";
 // Create Express server
 export const app = express();
 
@@ -19,17 +20,8 @@ app.use(logger("dev"));
 
 app.use("/assets", express.static(path.join(__dirname, "../public")));
 
-app.use((req, res, next) => {
-    if (req.url.startsWith("/storage")) {
-        authenticator(req, res, next);
-    } else {
-        next();
-    }
-});
-
-app.use("/storage", express.static(path.join(__dirname, "../public")));
+app.use(express.json());
+app.use("/", index);
 
 app.use(errorNotFoundHandler);
 app.use(errorHandler);
-
-app.use("/", index);

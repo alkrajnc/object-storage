@@ -1,16 +1,38 @@
+import { getBucketInfoFromName } from "../lib/fetcher";
+import { db } from "../db/config";
+import { objectLinks } from "../db/schema";
+import { eq } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
 
-export const authenticator = (
+export const validator = async (
     req: Request,
     res: Response,
     next: NextFunction,
-): void => {
-    const key = req.headers.authorization;
-
-    if (key !== "somevalue") {
-        res.status(404);
-        res.render("error", { title: "404", message: "Not Found" });
+): Promise<void> => {
+    const { token } = req.query;
+    const objectName = req.params.link.split("?")[0];
+    if (await checkToken(token as string, objectName)) {
+        next();
         return;
     }
-    next();
+    res.status(404);
+    res.render("error", { title: "404", message: "Not Found" });
+    return;
+};
+
+const checkToken = async (token: string, objectName: string) => {
+    const objectLink = (
+        await db
+            .select()
+            .from(objectLinks)
+            .where(eq(objectLinks.objectName, objectName))
+    )[0];
+    const today = new Date();
+    if (today.getTime() > objectLink.expiringAt.getTime()) {
+        return false;
+    }
+    if (objectLink.token !== token) {
+        return false;
+    }
+    return true;
 };

@@ -1,8 +1,9 @@
 {
-  "name": "express-ts-template",
-  "version": "1.2.0",
-  "description": "Simple starter template for ExpressJs and TypeScript based on expressjs/generator and TypeScript-Node-Starter",
-  "main": "server.js",
+  "name": "object-storage",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "description": "",
+  "main": "dist/server.js",
   "scripts": {
     "start": "npm run serve",
     "build": "npm run build-ts",
@@ -20,15 +21,21 @@
     "typecheck": "tsc --noEmit",
     "run-prettier": "prettier src/*.ts",
     "validate-prettiness": "yarn run-prettier -c",
-    "make-prettier": "yarn run-prettier --write"
+    "make-prettier": "yarn run-prettier --write",
+    "generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit migrate"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/multer": "^1.4.11",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.4.5",
     "drizzle-orm": "^0.31.2",
     "express": "^4.16.2",
     "http-errors": "^1.7.1",
     "morgan": "^1.9.1",
+    "multer": "^1.4.5-lts.1",
     "postgres": "^3.4.4",
     "pug": "^3.0.1"
   },
