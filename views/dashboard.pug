@@ -1,0 +1,9 @@
+extends dashboardLayout
+
+block content
+    h1 Dashboard
+    div(id="stats")
+        for stat in stats
+            div
+                p=stat.name
+                h2=stat.value

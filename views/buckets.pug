@@ -1,0 +1,22 @@
+extends dashboardLayout
+
+block content
+    div(style="display: flex; align-items:center; gap: 2rem; padding-bottom: 1rem;")
+        h1 Buckets
+        button
+            a(href="/dashboard/buckets/new") Add Bucket
+    div(id="bucket-list")
+        table
+            thead
+                tr
+                    th Type
+                    th name
+                    th Link
+            each bucket in buckets
+                tr
+                    td
+                        p= bucket.type
+                    td
+                        p(style="font-weight: 500;")= bucket.name
+                    td
+                        a(href="/dashboard/bucket/" + bucket.id) View Bucket

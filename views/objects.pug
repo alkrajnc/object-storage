@@ -1,0 +1,25 @@
+extends dashboardLayout
+
+block content
+    div(style="display: flex; align-items:center; gap: 2rem; padding-bottom: 1rem;")
+        h1 Objects in #{bucket.name}
+        button
+          a(href=`/dashboard/bucket/${bucket.id}/objects/new`) Add Object
+    div(id="bucket-list")
+        table
+            thead
+                tr
+                    th Name
+                    th Size
+                    th Mimetype
+                    th View
+            each object in objects
+                tr
+                    td
+                        p= object.name
+                    td
+                        p= object.size
+                    td
+                        p= object.mimetype
+                    td
+                        a(href="#") View

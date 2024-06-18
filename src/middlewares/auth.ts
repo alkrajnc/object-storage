@@ -36,3 +36,15 @@ const checkToken = async (token: string, objectName: string) => {
     }
     return true;
 };
+
+export const restricted = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+): Promise<void> => {
+    if (req.session.user) {
+        next();
+    } else {
+        res.redirect(`/dashboard/signin?ref=${req.baseUrl + req.path}`);
+    }
+};

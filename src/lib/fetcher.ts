@@ -1,6 +1,12 @@
 import { db } from "../db/config";
-import { Bucket, Object as ObjectType, buckets, objects } from "../db/schema";
-import { and, eq } from "drizzle-orm";
+import {
+    Bucket,
+    Object as ObjectType,
+    buckets,
+    objectLinks,
+    objects,
+} from "../db/schema";
+import { and, eq, sql } from "drizzle-orm";
 
 export async function getBucketInfoFromId(bucketId: number): Promise<Bucket> {
     const bucketInfo = (await db
@@ -24,6 +30,8 @@ export async function newObject(object: ObjectType): Promise<boolean> {
             path: object.path,
             bucketId: object.bucketId,
             name: object.name,
+            size: object.size,
+            mimetype: object.mimetype,
         });
         return true;
     } catch (error) {
@@ -55,4 +63,29 @@ export async function getObject(
                 : eq(objects.id, Number(objectId)),
         )) as ObjectType[];
     return object[0];
+}
+export async function getBuckets(): Promise<Bucket[]> {
+    return (await db.select().from(buckets)) as Bucket[];
+}
+export async function getObjectsFromBucket(
+    bucketId: number,
+): Promise<ObjectType[]> {
+    return (await db
+        .select()
+        .from(objects)
+        .where(eq(objects.bucketId, bucketId))) as ObjectType[];
+}
+export async function getObjectCount(): Promise<number> {
+    return (await db.select().from(objects)).length;
+}
+export async function getSharedObjectCount(): Promise<number> {
+    return (await db.select().from(objectLinks)).length;
+}
+export async function getStoredSize(): Promise<number> {
+    const size = (
+        await db
+            .select({ size: sql<number>`cast(sum(${objects.size}) as int)` })
+            .from(objects)
+    )[0];
+    return +(size.size / 1024 / 1024 / 1024).toFixed(4);
 }

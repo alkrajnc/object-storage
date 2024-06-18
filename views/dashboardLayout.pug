@@ -1,0 +1,27 @@
+
+
+
+doctype html
+html
+    head
+        title= title
+        link(rel='stylesheet', href='/assets/css/style.css')
+        link(rel='stylesheet', href='/assets/css/dashboard.css')
+
+    body(class="inter-font")
+        div(id="dashboard-root")
+            div(id="dashboard-nav")
+                div(class="user-dropdown" data-open="false" style="display: flex; position: relative; align-items:center; gap: 0.35rem;")
+                    img(class="profile-picture" src=user.image)
+                    span(style="font-weight: 500;")  #{user.username}
+                    object(data="/assets/icons/chevrons-up-down.svg" width="18" height="18")
+                    div(class="dropdown-content" style="display: none;")
+                        div(class="dropdown-item-wrapper")
+                            a(href="/profile") Profile
+                            a(href="/dashboard/signout") Signout
+                each link in navlist
+                    a(href=link.href class=`dashboard-nav-item ${activeLink == link.name ? "dashboard-nav-item-active" : ""}`) #{link.name}
+            div(id="dashboard-content")
+                block content
+    block scripts
+        script(src="/assets/js/dropdown.js")

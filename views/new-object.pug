@@ -1,0 +1,17 @@
+extends dashboardLayout
+
+block append scripts
+    script(src="/assets/js/fileUpload.js")
+
+block content
+    p(style=`${error ? "color: red;" : ""}`)= message
+    div(id="file-upload-container")
+        h2(style="padding-bottom: 0.5rem;") Upload Object
+        p Upload a single object to the bucket.
+        form(action=`/bucket/${bucketId}/object/upload/single` method="POST" enctype="multipart/form-data")
+
+            label(for="images" class="drop-container" id="dropcontainer")
+                span(class="drop-title") Drop file here
+                p or
+                input(type="file" name="object" id="file" required)
+            button(type="submit") Upload Object

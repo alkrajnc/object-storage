@@ -22,6 +22,8 @@ export const objects = pgTable(
         id: serial("id").primaryKey(),
         name: varchar("name", { length: 256 }),
         path: varchar("path", { length: 1024 }),
+        size: integer("size"),
+        mimetype: varchar("mimetype", { length: 256 }),
         bucketId: serial("bucketId").references(() => buckets.id),
     },
     objects => {
@@ -46,4 +48,10 @@ export const objectLinks = pgTable("object_links", {
     objectName: varchar("object_name", { length: 256 }).references(
         () => objects.name,
     ),
+});
+export const accounts = pgTable("accounts", {
+    username: varchar("username", { length: 256 }).primaryKey(),
+    hash: varchar("hash", { length: 1024 }),
+    salt: varchar("salt", { length: 1024 }),
+    image: varchar("image", { length: 512 }),
 });

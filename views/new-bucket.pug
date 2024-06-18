@@ -1,0 +1,16 @@
+extends dashboardLayout
+
+block content
+    h1 New Bucket
+    div(class="form-container")
+        form(action="/dashboard/buckets/new" method="POST")
+            div(class="form-group")
+                label(for="name") Name
+                input(type="text" name="name")
+            div(class="form-group")
+                label(for="type") Type
+                select(name="type")
+                    option(value="public") Public
+                    option(value="private") Private
+            div(class="form-group")
+                button(type="submit") Create Bucket

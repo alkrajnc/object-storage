@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  div(id="signin-root")
+    div(id="banner")
+      div(style="display: flex; align-items: center; gap: 1rem; padding: 2rem 0;")
+        img(src="/assets/logo.svg" alt="logo" id="logo" style="width: 60px; height: 60px;")
+        h3(style="color: white; font-weight: 500; font-size: 22px;") ObjectStorage
+      p(style="padding-bottom: 2rem; color: gray; font-size: 18px;") Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolorum beatae earum adipisci accusamus laboriosam quibusdam dicta ea eligendi incidunt. Placeat aut eos rem id, quasi nam assumenda blanditiis recusandae quaerat.
+    div(id="signin-container")
+      div(style="display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 1rem;")
+        h1(style="text-align:center;") Sign In
+        p(style="text-align:center; color: rgb(100, 100, 100); font-size: 16px;") Please sign in to continue
+        p(style="color: red; font-weight:500;")=message
+        form(method='post' id="signin-form")
+          div(class="form-group")
+            label(for='username') Username:
+            input(type='text' id="username-input" value=username name='username' required)
+          div(class="form-group")
+            label(for='password') Password:
+            input(type='password' id="password-input" name='password' required)
+          div(class="form-group")
+            input(type='submit' id="login-button" value='Sign In')
