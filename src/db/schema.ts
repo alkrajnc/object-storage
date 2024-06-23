@@ -12,7 +12,7 @@ export const bucketType = pgEnum("type", ["private", "public"]);
 
 export type Bucket = typeof buckets.$inferSelect;
 export type Object = typeof objects.$inferSelect;
-export type ObjectLink = typeof objectLinks.$inferSelect;
+export type ObjectLink = typeof objectAccess.$inferSelect;
 export type NewBucket = typeof buckets.$inferInsert;
 export type NewObject = typeof objects.$inferInsert;
 
@@ -40,9 +40,8 @@ export const buckets = pgTable("buckets", {
     path: varchar("path", { length: 256 }),
 });
 
-export const objectLinks = pgTable("object_links", {
+export const objectAccess = pgTable("object_access", {
     id: serial("id").primaryKey(),
-    link: varchar("link", { length: 1024 }),
     token: varchar("token", { length: 64 }),
     expiringAt: timestamp("expiring_at"),
     objectName: varchar("object_name", { length: 256 }).references(
@@ -54,4 +53,12 @@ export const accounts = pgTable("accounts", {
     hash: varchar("hash", { length: 1024 }),
     salt: varchar("salt", { length: 1024 }),
     image: varchar("image", { length: 512 }),
+});
+
+export const accessLogs = pgTable("access_logs", {
+    id: serial("id").primaryKey(),
+    objectName: varchar("object_name", { length: 256 }).references(
+        () => objects.name,
+    ),
+    timestamp: timestamp("timestamp"),
 });

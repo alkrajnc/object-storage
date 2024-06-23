@@ -17,9 +17,10 @@ import {
     getSharedObjectCount,
     getStoredSize,
 } from "../lib/fetcher";
+import { generateAccessToken } from "../lib/link";
+import { createAccessEntry } from "../lib/link";
 
 export const dashboardRouter = Router();
-
 
 export const navlist = [
     { name: "Dashboard", href: "/dashboard" },
@@ -32,7 +33,6 @@ export const navlist = [
         href: "/dashboard/settings",
     },
 ];
-
 
 dashboardRouter.use(bodyParser.urlencoded({ extended: true }));
 
@@ -167,6 +167,38 @@ dashboardRouter.get("/signout", (req, res) => {
         res.redirect("/dashboard/signin");
     });
 });
+dashboardRouter.get("/settings", restricted, async (req, res) => {
+    res.render("settings", {
+        user: {
+            username: req.session.user.username,
+            image: req.session.user.image,
+        },
+        title: "Settings",
+        activeLink: "Settings",
+        navlist,
+    });
+});
+dashboardRouter.get(
+    "/bucket/:bucketId/object/:objectName/token",
+    restricted,
+    async (req, res) => {
+        const { expiry }: { expiry?: string } = req.query;
+        const { objectName } = req.params;
+        const token = await generateAccessToken(objectName);
+        await createAccessEntry(objectName, token, expiry && new Date(expiry));
+        res.render("object-token", {
+            token,
+            user: {
+                username: req.session.user.username,
+                image: req.session.user.image,
+            },
+            bucketId: req.params.bucketId,
+            title: `Token`,
+            activeLink: "Buckets",
+            navlist,
+        });
+    },
+);
 
 /* dashboardRouter.post("/new-account", async (req, res) => {
     const salt = randomBytes(64).toString("hex");

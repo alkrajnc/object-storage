@@ -1,6 +1,6 @@
 import { getBucketInfoFromName } from "../lib/fetcher";
 import { db } from "../db/config";
-import { objectLinks } from "../db/schema";
+import { objectAccess } from "../db/schema";
 import { eq } from "drizzle-orm";
 import { NextFunction, Request, Response } from "express";
 
@@ -24,9 +24,12 @@ const checkToken = async (token: string, objectName: string) => {
     const objectLink = (
         await db
             .select()
-            .from(objectLinks)
-            .where(eq(objectLinks.objectName, objectName))
+            .from(objectAccess)
+            .where(eq(objectAccess.objectName, objectName))
     )[0];
+    if (!objectLink) {
+        return false;
+    }
     const today = new Date();
     if (today.getTime() > objectLink.expiringAt.getTime()) {
         return false;
@@ -48,3 +51,11 @@ export const restricted = async (
         res.redirect(`/dashboard/signin?ref=${req.baseUrl + req.path}`);
     }
 };
+
+export async function isBucketPublic(bucketName: string): Promise<boolean> {
+    const bucketInfo = await getBucketInfoFromName(bucketName);
+    if (bucketInfo.type === "public") {
+        return true;
+    }
+    return false;
+}

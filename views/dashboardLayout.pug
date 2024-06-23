@@ -23,5 +23,9 @@ html
                     a(href=link.href class=`dashboard-nav-item ${activeLink == link.name ? "dashboard-nav-item-active" : ""}`) #{link.name}
             div(id="dashboard-content")
                 block content
+    div(id="overlay")
+        div(id="overlay-close") x
+        div(id="overlay-content")
+        div(id="overlay-backdrop")
     block scripts
         script(src="/assets/js/dropdown.js")

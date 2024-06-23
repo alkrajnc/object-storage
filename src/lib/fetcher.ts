@@ -3,7 +3,7 @@ import {
     Bucket,
     Object as ObjectType,
     buckets,
-    objectLinks,
+    objectAccess,
     objects,
 } from "../db/schema";
 import { and, eq, sql } from "drizzle-orm";
@@ -79,7 +79,7 @@ export async function getObjectCount(): Promise<number> {
     return (await db.select().from(objects)).length;
 }
 export async function getSharedObjectCount(): Promise<number> {
-    return (await db.select().from(objectLinks)).length;
+    return (await db.select().from(objectAccess)).length;
 }
 export async function getStoredSize(): Promise<number> {
     const size = (
@@ -88,4 +88,14 @@ export async function getStoredSize(): Promise<number> {
             .from(objects)
     )[0];
     return +(size.size / 1024 / 1024 / 1024).toFixed(4);
+}
+export async function getAccessToken(
+    objectName: string,
+): Promise<string | null> {
+    const token = await db
+        .select()
+        .from(objectAccess)
+        .where(eq(objectAccess.objectName, objectName));
+    if (token.length === 0) return null;
+    return token[0].token;
 }

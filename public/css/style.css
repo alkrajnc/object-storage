@@ -45,6 +45,7 @@ h6 {
 #signin-container {
     padding: 1rem;
     flex: 1;
+    width: 50%;
     border-radius: 1rem;
     width: max-content;
 }
@@ -57,6 +58,7 @@ h6 {
 #banner {
     background-color: #1c1c1c;
     flex: 1;
+    width: 50%;
     height: calc(100vh - 1rem);
     padding: 4rem;
     display: flex;
@@ -140,4 +142,15 @@ input[type=file]::file-selector-button {
 }
 input[type=file]::file-selector-button:hover{
     background-color: rgb(70, 70, 70);
+}
+.highlight{
+    color: #000000;
+    border: 1px solid #adadad;
+    background-color: #f1f1f1;
+    padding: 0.5rem;
+    font-family: monospace;
+    font-weight: 400;
+    border-radius: 6px;
+    font-size: 14px;
+    margin: 8px;
 }

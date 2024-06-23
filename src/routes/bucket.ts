@@ -1,15 +1,16 @@
 import { Router } from "express";
 import * as controller from "../controllers/index";
 import { upload } from "../middlewares/fileUpload";
-import { getUrl, newObject } from "../lib/fetcher";
+import { getObject, getUrl, newObject } from "../lib/fetcher";
 import { db } from "../db/config";
 import { Bucket, buckets, objects } from "../db/schema";
 import { eq } from "drizzle-orm";
 import mime from "mime-types";
 import { readFileSync, statSync } from "fs";
-import { validator } from "../middlewares/auth";
+import { isBucketPublic, validator } from "../middlewares/auth";
 import "dotenv/config";
 import { navlist } from "./dashboard";
+import { validateAccessToken } from "../lib/auth";
 export const bucketRouter = Router();
 
 bucketRouter.post("/new", async (req, res) => {
@@ -70,7 +71,7 @@ bucketRouter.get("/:bucketId/objects/list", async (req, res) => {
         .where(eq(objects.bucketId, Number(req.params.bucketId)));
     res.json({ objectList });
 });
-bucketRouter.get("/:bucketName/:link", validator, async (req, res) => {
+/* bucketRouter.get("/:bucketName/:link", validator, async (req, res) => {
     const filePath = await getUrl(
         req.params.bucketName,
         req.params.link.split("?")[0],
@@ -78,4 +79,29 @@ bucketRouter.get("/:bucketName/:link", validator, async (req, res) => {
     const fileBuffer = readFileSync(filePath);
     res.header("Content-Type", "image/png");
     res.send(fileBuffer);
+}); */
+
+bucketRouter.get("/:bucketName/:objectName", async (req, res) => {
+    const { bucketName, objectName } = req.params;
+    const { accessToken } = req.query;
+    const isPublic = await isBucketPublic(bucketName);
+    if (isPublic) {
+        const object = await getObject(objectName);
+        const file = readFileSync(object.path);
+        res.header("Content-Type", object.mimetype);
+        res.send(file);
+        return;
+    }
+    if (accessToken) {
+        if (await validateAccessToken(objectName, accessToken as string)) {
+            const object = await getObject(objectName);
+            const file = readFileSync(object.path);
+            res.header("Content-Type", object.mimetype);
+            res.send(file);
+            return;
+        }
+    }
+    res.status(401).json({
+        message: "Unauthorized access to private bucket",
+    });
 });

@@ -3,14 +3,15 @@ import { db } from "../db/config";
 import { buckets } from "../db/schema";
 import { Bucket } from "../db/schema";
 import { readFileSync } from "fs";
-import { createLink, generateAccessLink } from "../lib/link";
+import { createAccessEntry, generateAccessToken } from "../lib/link";
+import { restricted } from "../middlewares/auth";
 
 export const objectRouter = Router();
 
-objectRouter.get("/:objectName/link/create", async (req, res) => {
+objectRouter.get("/:objectName/token/create", restricted, async (req, res) => {
     const { expiry }: { expiry?: string } = req.query;
     const { objectName } = req.params;
-    const { link, token } = await generateAccessLink(objectName);
-    await createLink(objectName, token, link, expiry && new Date(expiry));
-    res.json({ link });
+    const token = await generateAccessToken(objectName);
+    await createAccessEntry(objectName, token, expiry && new Date(expiry));
+    res.json({ token });
 });
